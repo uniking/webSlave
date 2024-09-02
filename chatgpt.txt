@@ -1,0 +1,19 @@
+//先写一个框架， 以后根据自己的需要扩充命令
+你作为一个linux下的c语言开发者， 需要完成下面的任务。
+1, 使用tcp协议写一个service, 服务端接收json数据， 格式如下
+{"cmd":"mount", "uuid":"614eacee-debc-4f0c-bf33-22955999466d", "path":"/home/arch/samb"}
+
+2, 服务器解析收到的json, 开始执行对应的命令， 如"mount UUID=614eacee-debc-4f0c-bf33-22955999466d /home/arch/samb"
+
+3, 服务器执行完命令后将命令打印的信息传递给客户端
+
+4, 在写一个客户端， 通过tcp协议向服务端发送{"cmd":"mount", "uuid":"614eacee-debc-4f0c-bf33-22955999466d", "path":"/home/arch/samb"}, 并将返回的数据打印到控制台
+
+
+
+
+//让chatgpt写完框架后， 再写一个systemd的服务配置
+请为service写一个systemd的配置，让这个服务随系统启动
+
+
+
