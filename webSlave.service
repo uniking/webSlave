@@ -5,8 +5,6 @@ After=network.target
 [Service]
 ExecStart=/usr/local/bin/webSlave
 Restart=on-failure
-User=nobody
-Group=nogroup
 
 [Install]
 WantedBy=multi-user.target
