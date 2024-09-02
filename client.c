@@ -7,7 +7,7 @@
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
-//webClient {"cmd":"mount", "uuid":"614eacee-debc-4f0c-bf33-22955999466d", "path":"/home/arch/samb"}
+//webClient "{\"cmd\":\"mount\", \"uuid\":\"614eacee-debc-4f0c-bf33-22955999466d\", \"path\":\"/home/arch/samb\"}"
 int main(int argc, char *argv[]) {
     int sock = 0;
     struct sockaddr_in serv_addr;
