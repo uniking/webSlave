@@ -7,11 +7,22 @@
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
-int main() {
+//webClient {"cmd":"mount", "uuid":"614eacee-debc-4f0c-bf33-22955999466d", "path":"/home/arch/samb"}
+int main(int argc, char *argv[]) {
     int sock = 0;
     struct sockaddr_in serv_addr;
-    char *message = "{\"cmd\":\"mount\", \"uuid\":\"614eacee-debc-4f0c-bf33-22955999466d\", \"path\":\"/home/arch/samb\"}";
+    //char *message = "{\"cmd\":\"mount\", \"uuid\":\"614eacee-debc-4f0c-bf33-22955999466d\", \"path\":\"/home/arch/samb\"}";
+    char *message = NULL;
     char buffer[BUFFER_SIZE] = {0};
+
+    if(argc != 2)
+    {
+	printf("\n webClient jsonCmd\n");
+	return -1;
+    }
+
+    message = argv[1];
+    printf("\n %s %s\n", argv[0], message);
 
     // 创建socket
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -39,8 +50,8 @@ int main() {
     printf("Message sent\n");
 
     // 读取服务器返回的数据
-    int valread = read(sock, buffer, BUFFER_SIZE);
-    printf("Server response: %s\n", buffer);
+    //int valread = read(sock, buffer, BUFFER_SIZE);
+    //printf("Server response: %s\n", buffer);
 
     // 关闭连接
     close(sock);

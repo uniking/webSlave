@@ -1,5 +1,5 @@
 all:
 	gcc -o webSlave server.c -ljson-c
-	gcc -o client client.c
+	gcc -o webClient client.c
 clean:
-	rm webSlave client
+	rm webSlave webClient
