@@ -104,6 +104,8 @@ void *handle_client(void *socket_desc) {
     struct json_object *uuid;
     struct json_object *path;
     struct json_object *times;
+    struct json_object *operation;
+    struct json_object *target;
 
     parsed_json = json_tokener_parse(buffer);
     json_object_object_get_ex(parsed_json, "cmd", &cmd);
@@ -142,6 +144,80 @@ void *handle_client(void *socket_desc) {
                  json_object_get_string(path));
 
         printf("Executing mount command: %s\n", command);
+
+        if (is_sync) {
+            execute_command(command, new_socket, 1);
+        } else {
+            // 异步执行
+            add_async_command(buffer);
+            close(new_socket);
+            execute_command(command, -1, 0);
+            remove_async_command(buffer);
+        }
+    } else if (strcmp(command_str, "docker") == 0) {
+        // 处理 "docker" 指令
+        json_object_object_get_ex(parsed_json, "operation", &operation);
+        json_object_object_get_ex(parsed_json, "target", &target);
+
+        char command[BUFFER_SIZE];
+        snprintf(command, sizeof(command), "%s %s %s", 
+                 json_object_get_string(cmd), 
+                 json_object_get_string(operation),
+                 json_object_get_string(target));
+
+        printf("Executing docker command: %s\n", command);
+
+        if (is_sync) {
+            execute_command(command, new_socket, 1);
+        } else {
+            // 异步执行
+            add_async_command(buffer);
+            close(new_socket);
+            execute_command(command, -1, 0);
+            remove_async_command(buffer);
+        }
+    } else if (strcmp(command_str, "umount") == 0) {
+        // 处理 "umount" 指令
+        json_object_object_get_ex(parsed_json, "path", &path);
+
+        char command[BUFFER_SIZE];
+        snprintf(command, sizeof(command), "%s %s", 
+                 json_object_get_string(cmd), 
+                 json_object_get_string(path));
+
+        printf("Executing umount command: %s\n", command);
+
+        if (is_sync) {
+            execute_command(command, new_socket, 1);
+        } else {
+            // 异步执行
+            add_async_command(buffer);
+            close(new_socket);
+            execute_command(command, -1, 0);
+            remove_async_command(buffer);
+        }
+    } else if (strcmp(command_str, "shutdown") == 0) {
+        // 处理 "shutdown" 指令
+        char command[BUFFER_SIZE];
+        snprintf(command, sizeof(command), "shutdown -h now");
+
+        printf("Executing shutdown command: %s\n", command);
+
+        if (is_sync) {
+            execute_command(command, new_socket, 1);
+        } else {
+            // 异步执行
+            add_async_command(buffer);
+            close(new_socket);
+            execute_command(command, -1, 0);
+            remove_async_command(buffer);
+        }
+    } else if (strcmp(command_str, "reboot") == 0) {
+        // 处理 "reboot" 指令
+        char command[BUFFER_SIZE];
+        snprintf(command, sizeof(command), "reboot");
+
+        printf("Executing reboot command: %s\n", command);
 
         if (is_sync) {
             execute_command(command, new_socket, 1);

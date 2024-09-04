@@ -1,0 +1,5 @@
+{
+"cmd":"mount",
+"path":"/home/arch/samba",
+"sync":false
+}

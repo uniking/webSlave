@@ -1,0 +1,6 @@
+{
+"cmd":"docker",
+"operation":"stop",
+"target":"samba",
+"sync":false
+}
