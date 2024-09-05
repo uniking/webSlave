@@ -203,7 +203,7 @@ void *handle_client(void *socket_desc) {
         }
     } else if (strcmp(command_str, "smartctl") == 0) {
         // 处理 "smartctl" 指令
-         json_object_object_get_ex(parsed_json, "operation", &operation);
+        json_object_object_get_ex(parsed_json, "operation", &operation);
         json_object_object_get_ex(parsed_json, "target", &target);
 
         char command[BUFFER_SIZE];

@@ -1,6 +1,6 @@
 {
 "cmd":"smartctl",
 "operation":"-a",
-"target":"/dev/sda"
+"target":"/dev/sda",
 "sync":true
 }
