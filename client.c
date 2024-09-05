@@ -33,6 +33,26 @@ char* read_json_from_file(const char *filename) {
     return json_content;
 }
 
+// 持续读取服务端数据直到连接关闭
+void receive_from_server(int sock) {
+    char buffer[BUFFER_SIZE] = {0};
+    int valread;
+
+    //printf("Response from server:\n");
+
+    // 循环读取服务端返回的数据，直到 socket 关闭
+    while ((valread = recv(sock, buffer, BUFFER_SIZE - 1, 0)) > 0) {
+        buffer[valread] = '\0';
+        printf("%s", buffer); // 持续打印服务端传来的数据
+    }
+
+    // if (valread == 0) {
+    //     printf("\nConnection closed by server\n");
+    // } else {
+    //     perror("recv failed");
+    // }
+}
+
 // 客户端程序
 int main(int argc, char const *argv[]) {
     if (argc != 2) {
@@ -42,7 +62,6 @@ int main(int argc, char const *argv[]) {
 
     int sock = 0;
     struct sockaddr_in serv_addr;
-    char buffer[BUFFER_SIZE] = {0};
 
     // 读取JSON文件内容
     char *json_command = read_json_from_file(argv[1]);
@@ -70,7 +89,7 @@ int main(int argc, char const *argv[]) {
 
     // 发送JSON命令
     send(sock, json_command, strlen(json_command), 0);
-    printf("JSON command sent: %s\n", json_command);
+    //printf("JSON command sent: %s\n", json_command);
 
     // 如果是同步命令，接收服务端返回的数据
     struct json_object *parsed_json;
@@ -81,9 +100,8 @@ int main(int argc, char const *argv[]) {
     int is_sync = json_object_get_boolean(sync);
 
     if (is_sync) {
-        int valread = read(sock, buffer, BUFFER_SIZE);
-        buffer[valread] = '\0';
-        printf("Response from server: %s\n", buffer);
+        // 持续读取直到服务端关闭连接
+        receive_from_server(sock);
     }
 
     free(json_command);

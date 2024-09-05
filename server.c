@@ -74,6 +74,7 @@ void execute_command(const char *command, int new_socket, int is_sync) {
         }
     }
     pclose(fp);
+    close(new_socket);
 }
 
 // 处理 "currentAsyn" 命令
@@ -106,6 +107,8 @@ void *handle_client(void *socket_desc) {
     struct json_object *times;
     struct json_object *operation;
     struct json_object *target;
+    struct json_object *dest;
+    struct json_object *src;
 
     parsed_json = json_tokener_parse(buffer);
     json_object_object_get_ex(parsed_json, "cmd", &cmd);
@@ -176,6 +179,50 @@ void *handle_client(void *socket_desc) {
             execute_command(command, -1, 0);
             remove_async_command(buffer);
         }
+    } else if (strcmp(command_str, "rsync") == 0) {
+        // 处理 "rsync" 指令
+         json_object_object_get_ex(parsed_json, "src", &src);
+        json_object_object_get_ex(parsed_json, "dest", &dest);
+
+        char command[BUFFER_SIZE];
+        snprintf(command, sizeof(command), "%s -rlptgoD %s %s", 
+                 json_object_get_string(cmd), 
+                 json_object_get_string(src),
+                 json_object_get_string(dest));
+
+        printf("Executing docker command: %s\n", command);
+
+        if (is_sync) {
+            execute_command(command, new_socket, 1);
+        } else {
+            // 异步执行
+            add_async_command(buffer);
+            close(new_socket);
+            execute_command(command, -1, 0);
+            remove_async_command(buffer);
+        }
+    } else if (strcmp(command_str, "smartctl") == 0) {
+        // 处理 "smartctl" 指令
+         json_object_object_get_ex(parsed_json, "operation", &operation);
+        json_object_object_get_ex(parsed_json, "target", &target);
+
+        char command[BUFFER_SIZE];
+        snprintf(command, sizeof(command), "%s %s %s", 
+                 json_object_get_string(cmd), 
+                 json_object_get_string(operation),
+                 json_object_get_string(target));
+
+        printf("Executing docker command: %s\n", command);
+
+        if (is_sync) {
+            execute_command(command, new_socket, 1);
+        } else {
+            // 异步执行
+            add_async_command(buffer);
+            close(new_socket);
+            execute_command(command, -1, 0);
+            remove_async_command(buffer);
+        }
     } else if (strcmp(command_str, "umount") == 0) {
         // 处理 "umount" 指令
         json_object_object_get_ex(parsed_json, "path", &path);
@@ -212,6 +259,22 @@ void *handle_client(void *socket_desc) {
             execute_command(command, -1, 0);
             remove_async_command(buffer);
         }
+    } else if (strcmp(command_str, "diskInfo") == 0) {
+        // 处理 "diskInfo" 指令
+        char command[BUFFER_SIZE];
+        snprintf(command, sizeof(command), "lsblk -f");
+
+        printf("Executing diskInfo command: %s\n", command);
+
+        if (is_sync) {
+            execute_command(command, new_socket, 1);
+        } else {
+            // 异步执行
+            add_async_command(buffer);
+            close(new_socket);
+            execute_command(command, -1, 0);
+            remove_async_command(buffer);
+        }
     } else if (strcmp(command_str, "reboot") == 0) {
         // 处理 "reboot" 指令
         char command[BUFFER_SIZE];
@@ -228,10 +291,28 @@ void *handle_client(void *socket_desc) {
             execute_command(command, -1, 0);
             remove_async_command(buffer);
         }
+    } else if (strcmp(command_str, "upgrade") == 0) {
+        // 处理 "upgrade" 指令
+        char command[BUFFER_SIZE];
+        snprintf(command, sizeof(command), "pacman -Syu --noconfirm");
+
+        printf("Executing upgrade command: %s\n", command);
+
+        if (is_sync) {
+            execute_command(command, new_socket, 1);
+        } else {
+            // 异步执行
+            add_async_command(buffer);
+            close(new_socket);
+            execute_command(command, -1, 0);
+            remove_async_command(buffer);
+        }
     } else if (strcmp(command_str, "currentAsyn") == 0) {
         // 处理 "currentAsyn" 指令
         handle_current_async(new_socket);
         close(new_socket);
+    }else{
+        printf("unknow command: %s\n", command_str);
     }
 
     free(socket_desc);
@@ -299,5 +380,6 @@ int main() {
     // 销毁互斥锁
     pthread_mutex_destroy(&lock);
 
+    printf("server exist");
     return 0;
 }

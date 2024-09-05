@@ -1,0 +1,5 @@
+{
+"cmd":"rsync",
+"dest":"home/arch/backupWww",
+"src":"/home/arch/www"
+}
