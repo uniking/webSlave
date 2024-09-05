@@ -2,4 +2,5 @@
 "cmd":"smartctl",
 "operation":"-a",
 "target":"/dev/sda"
+"sync":true
 }

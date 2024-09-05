@@ -1,5 +1,6 @@
 {
 "cmd":"rsync",
-"dest":"home/arch/backupWww",
-"src":"/home/arch/www"
+"src":"/home/wzl/tmp/*",
+"dest":"/home/wzl/tmp2/",
+"sync":false
 }
