@@ -203,14 +203,8 @@ void *handle_client(void *socket_desc) {
         }
     } else if (strcmp(command_str, "smartctl") == 0) {
         // 处理 "smartctl" 指令
-        json_object_object_get_ex(parsed_json, "operation", &operation);
-        json_object_object_get_ex(parsed_json, "target", &target);
-
         char command[BUFFER_SIZE];
-        snprintf(command, sizeof(command), "%s %s %s", 
-                 json_object_get_string(cmd), 
-                 json_object_get_string(operation),
-                 json_object_get_string(target));
+        snprintf(command, sizeof(command), "/usr/local/bin/diskHealth.sh");
 
         printf("Executing docker command: %s\n", command);
 
